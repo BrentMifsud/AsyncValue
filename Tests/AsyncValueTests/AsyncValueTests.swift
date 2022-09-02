@@ -2,10 +2,60 @@ import XCTest
 @testable import AsyncValue
 
 final class AsyncValueTests: XCTestCase {
-    func testExample() throws {
-        // This is an example of a functional test case.
-        // Use XCTAssert and related functions to verify your tests produce the correct
-        // results.
-        XCTAssertEqual(AsyncValue().text, "Hello, World!")
+    var sut: AsyncValue<String>?
+    
+    override func tearDown() {
+        super.tearDown()
+        sut = nil
+    }
+    
+    func test_allValues() async throws {
+        sut = .init(wrappedValue: "Test")
+        
+        let testTask = Task {
+            var values = [String]()
+            
+            for await value in sut!.projectedValue {
+                values.append(value)
+                
+                if value == "Finish" {
+                    break
+                }
+            }
+            
+            XCTAssertEqual(values, ["Test", "Finish"])
+        }
+        
+        Task {
+            try await Task.sleep(nanoseconds: 1_000_000)
+            sut?.wrappedValue = "Finish"
+        }
+        
+        await testTask.value
+    }
+    
+    func test_newValues() async throws {
+        sut = .init(wrappedValue: "Test", behavior: .newValues)
+        
+        let testTask = Task {
+            var values = [String]()
+            
+            for await value in sut!.projectedValue {
+                values.append(value)
+                
+                if value == "Finish" {
+                    break
+                }
+            }
+            
+            XCTAssertEqual(values, ["Finish"])
+        }
+        
+        Task {
+            try await Task.sleep(nanoseconds: 1_000_000)
+            sut?.wrappedValue = "Finish"
+        }
+        
+        await testTask.value
     }
 }
