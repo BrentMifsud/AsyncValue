@@ -1,3 +1,5 @@
+![Supported Platforms](https://img.shields.io/static/v1?label=Supported%20Platforms&message=iOS%20|%20macOS%20|%20tvOS%20|%20watchOS&color=red&style=flat&logo=swift&labelColor=white) ![Swift Versions](https://img.shields.io/static/v1?label=Swift&message=5.6&color=red&style=flat&logo=swift&labelColor=white)
+
 # AsyncValue
 
 This is a simple package that provides a convenience property wrapper around AsyncStream that behaves almost identically to `@Published`.
