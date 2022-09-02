@@ -1,12 +1,15 @@
+import Combine
 import XCTest
 @testable import AsyncValue
 
 final class AsyncValueTests: XCTestCase {
     var sut: AsyncValue<String>?
+    var cancellable: AnyCancellable?
     
     override func tearDown() {
         super.tearDown()
         sut = nil
+        cancellable = nil
     }
     
     func test_allValues() async throws {
@@ -57,5 +60,35 @@ final class AsyncValueTests: XCTestCase {
         }
         
         await testTask.value
+    }
+    
+    func test_observableObjectPublisher() {
+        let sut = TestObservableObject()
+        
+        let exp = expectation(description: "wait for combine publisher")
+        
+        var updateCount: Int = 0
+        
+        cancellable = sut.objectWillChange.sink {
+            updateCount += 1
+        }
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1, execute: {
+            sut.myValue = "Test 2"
+            sut.myValue = "Finish"
+            exp.fulfill()
+        })
+        
+        waitForExpectations(timeout: 3)
+        
+        // Since we subscribed after the observable object is created, the initial state of "Test".
+        // Cannot trigger a new value in our sink block above.
+        XCTAssertEqual(updateCount, 2)
+    }
+}
+
+fileprivate class TestObservableObject: ObservableObject {
+    @AsyncValue var myValue = "Test" {
+        willSet { objectWillChange.send() }
     }
 }

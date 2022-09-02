@@ -38,9 +38,11 @@ import Foundation
 ///   // Task 2 value: Test
 ///   // Task 1 value: new value
 ///   // Task 2 value: new value
+///   ```
 ///
-///   // You can also specify the behavior of `AsyncValue` to only send updates for new values.
+///   Ignoring updates if the new value is the same as the old value:
 ///
+///   ```swift
 ///   @AsyncValue(behavior: .newValues) myOtherValue: String = "Test"
 ///
 ///   print(myOtherValue) // prints: "Test"
@@ -59,6 +61,14 @@ import Foundation
 ///
 ///   // the below will be printed:
 ///   // Task value: new value
+///   ```
+///
+///   Usage with SwiftUI's `ObseravbleObject`:
+///
+///   ```swift
+///     @AsyncValue var myValue = "Test" {
+///         willSet { objectWillChange.send() }
+///     }
 ///   ```
 @propertyWrapper
 public struct AsyncValue<Value: Equatable> {
