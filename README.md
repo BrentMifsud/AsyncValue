@@ -115,9 +115,11 @@ Task 1 Value: New Value
 
 `AsyncValue` can be adapted to work seamlessly with `ObservableObject` with a single line of code:
 
+```swift
 class MyObservableObject: ObservableObject {
     @AsyncValue var myValue: String = "Test" {
         // IMPORTANT: you must use `willSet` as that is what `@Published` uses under the hood
         willSet { objectWillChange.send() }
     }
 }
+```
