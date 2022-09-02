@@ -1,16 +1,14 @@
-import Combine
 import XCTest
 @testable import AsyncValue
 
 final class AsyncValueTests: XCTestCase {
     var sut: AsyncValue<String>?
-    var cancellable: AnyCancellable?
-    
+
     override func tearDown() {
         super.tearDown()
         sut = nil
-        cancellable = nil
     }
+    
     
     func test_allValues() async throws {
         sut = .init(wrappedValue: "Test")
@@ -61,7 +59,21 @@ final class AsyncValueTests: XCTestCase {
         
         await testTask.value
     }
-    
+}
+
+#if canImport(Combine) && canImport(SwiftUI)
+import Combine
+import SwiftUI
+
+extension AsyncValueTests {
+    fileprivate class TestObservableObject: ObservableObject {
+        var cancellable: AnyCancellable?
+        
+        @AsyncValue var myValue = "Test" {
+            willSet { objectWillChange.send() }
+        }
+    }
+
     func test_observableObjectPublisher() {
         let sut = TestObservableObject()
         
@@ -69,7 +81,7 @@ final class AsyncValueTests: XCTestCase {
         
         var updateCount: Int = 0
         
-        cancellable = sut.objectWillChange.sink {
+        sut.cancellable = sut.objectWillChange.sink {
             updateCount += 1
         }
         
@@ -86,9 +98,4 @@ final class AsyncValueTests: XCTestCase {
         XCTAssertEqual(updateCount, 2)
     }
 }
-
-fileprivate class TestObservableObject: ObservableObject {
-    @AsyncValue var myValue = "Test" {
-        willSet { objectWillChange.send() }
-    }
-}
+#endif
