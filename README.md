@@ -129,3 +129,22 @@ class MyObservableObject: ObservableObject {
     }
 }
 ```
+
+There is also an `.onRecieve(stream:perform:)` view modifier that allows you to respond to changes from an @AsyncValue
+
+```swift
+struct MyView: View {
+    var body: some View {
+        Text("Hello World!")
+            .onReceive(myService.$myValue) { value in
+                print("The value changed to: \(value)")
+            }
+    }
+}
+
+class MyService: ObservableObject {
+    @AsyncValue var myValue: String = "Test" {
+        willSet { objectWillChange.send() }
+    }
+}
+```
