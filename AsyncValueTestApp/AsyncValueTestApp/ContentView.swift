@@ -18,9 +18,9 @@ struct ContentView: View {
             Text("ObservableObject: \(testService.testValue)")
                 .accessibilityIdentifier("observed-object-value")
             
-            Text(".onChange: \(onChangeValue)")
-                .accessibilityIdentifier("on-change-value")
-                .onChange(of: testService.$testValue) { value in
+            Text(".onReceive: \(onChangeValue)")
+                .accessibilityIdentifier("on-receive-value")
+                .onReceive(testService.$testValue) { value in
                     onChangeValue = value
                 }
             

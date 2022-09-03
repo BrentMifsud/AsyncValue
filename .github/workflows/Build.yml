@@ -20,7 +20,7 @@ jobs:
 
   build_macos:
     runs-on: macos-12
-
+    
     steps:
     - uses: actions/checkout@v3
     # - name: List Xcode Versions
@@ -33,29 +33,19 @@ jobs:
       uses: maxim-lobanov/setup-xcode@v1.4.1
       with:
         xcode-version: latest-stable
-    - name: Validate Environment
-      run: >
-        echo "Project Directory: $GITHUB_WORKSPACE/AsyncValueTestApp";
-        echo "Developer Directory: $(xcode-select --print-path)";
-        cd $GITHUB_WORKSPACE/AsyncValueTestApp;
-        echo Current Directory: $(pwd);
-    - name: Print Xcode Project Details
-      run: >
-        cd $GITHUB_WORKSPACE/AsyncValueTestApp;
-        xcodebuild -list -project AsyncValueTestApp.xcodeproj;
     - name: Build and test
       run: > 
-        cd $GITHUB_WORKSPACE/AsyncValueTestApp;
+        cd ${{ github.workspace }}/AsyncValueTestApp;
         xcodebuild test -project AsyncValueTestApp.xcodeproj
         -scheme AsyncValueTestApp
         -destination 'platform=iOS Simulator,name=iPhone 13'
         -testPlan AllTests
-        -resultBundlePath $RUNNER_TEMP/TestResults.xcresult;
+        -resultBundlePath ${{ runner.temp }}/TestResults.xcresult;
     - name: Test Results
       uses: kishikawakatsumi/xcresulttool@v1.5.0
       if: success() || failure()
       with:
-        path: ${{ env.RUNNER_TEMP }}/TestResults.xcresult
+        path: ${{ runner.temp }}/TestResults.xcresult
         token: ${{ secrets.GITHUB_TOKEN }}
 
     

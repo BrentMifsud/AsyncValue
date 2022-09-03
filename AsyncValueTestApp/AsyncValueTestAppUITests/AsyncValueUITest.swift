@@ -11,11 +11,11 @@ class AsyncValueUITest: XCTestCase {
     var app: XCUIApplication?
     
     lazy var observedObjectText: XCUIElement = {
-        app!/*@START_MENU_TOKEN@*/.staticTexts["observed-object-value"]/*[[".staticTexts[\"ObservableObject: Test\"]",".staticTexts[\"observed-object-value\"]"],[[[-1,1],[-1,0]]],[0]]@END_MENU_TOKEN@*/
+        app!.staticTexts["observed-object-value"]
     }()
     
     lazy var onChangeText: XCUIElement = {
-        app!/*@START_MENU_TOKEN@*/.staticTexts["on-change-value"]/*[[".staticTexts[\".onChange: Test\"]",".staticTexts[\"on-change-value\"]"],[[[-1,1],[-1,0]]],[0]]@END_MENU_TOKEN@*/
+        app!.staticTexts["on-receive-value"]
     }()
     
     lazy var changeValueButton: XCUIElement = {
@@ -45,9 +45,9 @@ class AsyncValueUITest: XCTestCase {
     }
     
     func test_asyncValue_asyncSequence_works() throws {
-        XCTAssertEqual(onChangeText.label, ".onChange: Test")
+        XCTAssertEqual(onChangeText.label, ".onReceive: Test")
         changeValueButton.tap()
-        XCTAssertEqual(onChangeText.label, ".onChange: Updated Value")
+        XCTAssertEqual(onChangeText.label, ".onReceive: Updated Value")
     }
     
     override func tearDownWithError() throws {

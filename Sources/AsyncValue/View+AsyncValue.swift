@@ -9,20 +9,39 @@
 
 import SwiftUI
 
-extension View {
+public extension View {
     /// Adds a modifier for this view that fires an action when a specific `AsyncValue` changes.
     /// - Parameters:
-    ///   - asyncStream: the async stream to recieve updates from
-    ///   - valueRecieved: handler for new values
+    ///   - stream: the async stream to recieve updates from
+    ///   - handler: handler for new values
     /// - Returns: some View
-    @ViewBuilder public func onChange<Value>(
-        of asyncStream: AsyncStream<Value>,
-        valueRecieved: @escaping (Value) async -> Void
+    ///
+    /// This view modifier works very similarly to `.onReceive(publisher:perform:)` and `.onChange(value:perform:)`
+    ///
+    /// ```swift
+    ///  struct MyView: View {
+    ///     var body: some View {
+    ///         Text("Hello World!")
+    ///             .onReceive(myService.$myValue) { value in
+    ///                 print("The value changed to: \(value)")
+    ///             }
+    ///     }
+    ///  }
+    ///
+    ///  class MyService: ObservableObject {
+    ///     @AsyncValue var myValue: String = "Test" {
+    ///         willSet { objectWillChange.send() }
+    ///     }
+    ///  }
+    /// ```
+    @ViewBuilder func onReceive<Value>(
+        _ stream: AsyncStream<Value>,
+        perform handler: @escaping (Value) async -> Void
     ) -> some View {
         if #available(iOS 15.0, macOS 12.0, tvOS 15.0, watchOS 8.0, *) {
             task {
-                for await value in asyncStream {
-                    await valueRecieved(value)
+                for await value in stream {
+                    await handler(value)
                 }
             }
         } else {
@@ -30,20 +49,15 @@ extension View {
             
             onAppear {
                 task = Task {
-                    for await value in asyncStream {
-                        await valueRecieved(value)
+                    for await value in stream {
+                        await handler(value)
                     }
                 }
             }
             .onDisappear {
                 task?.cancel()
             }
-            .eraseToAnyView()
         }
-    }
-    
-    internal func eraseToAnyView() -> some View {
-        AnyView(self)
     }
 }
 

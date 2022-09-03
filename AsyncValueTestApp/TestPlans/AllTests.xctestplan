@@ -16,6 +16,7 @@
   },
   "testTargets" : [
     {
+      "parallelizable" : true,
       "target" : {
         "containerPath" : "container:AsyncValueTestApp.xcodeproj",
         "identifier" : "2AA580C628C2FFD7006EE900",
@@ -23,6 +24,7 @@
       }
     },
     {
+      "parallelizable" : true,
       "target" : {
         "containerPath" : "container:..",
         "identifier" : "AsyncValueTests",
