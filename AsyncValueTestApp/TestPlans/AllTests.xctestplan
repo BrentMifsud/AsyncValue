@@ -1,0 +1,34 @@
+{
+  "configurations" : [
+    {
+      "id" : "C618D498-1D33-4E73-A5D7-224890A4B3D0",
+      "name" : "Configuration 1",
+      "options" : {
+        "addressSanitizer" : {
+          "enabled" : false
+        }
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "testExecutionOrdering" : "random",
+    "testTimeoutsEnabled" : true
+  },
+  "testTargets" : [
+    {
+      "target" : {
+        "containerPath" : "container:AsyncValueTestApp.xcodeproj",
+        "identifier" : "2AA580C628C2FFD7006EE900",
+        "name" : "AsyncValueTestAppUITests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:..",
+        "identifier" : "AsyncValueTests",
+        "name" : "AsyncValueTests"
+      }
+    }
+  ],
+  "version" : 1
+}

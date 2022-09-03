@@ -28,7 +28,7 @@ final class AsyncValueTests: XCTestCase {
         }
         
         Task {
-            try await Task.sleep(nanoseconds: 1_000_000)
+            try await Task.sleep(nanoseconds: 1_000_000_000)
             sut?.wrappedValue = "Finish"
         }
         
@@ -53,7 +53,7 @@ final class AsyncValueTests: XCTestCase {
         }
         
         Task {
-            try await Task.sleep(nanoseconds: 1_000_000)
+            try await Task.sleep(nanoseconds: 1_000_000_000)
             sut?.wrappedValue = "Finish"
         }
         
