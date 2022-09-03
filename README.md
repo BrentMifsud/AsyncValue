@@ -1,4 +1,8 @@
-[![Build](https://github.com/BrentMifsud/AsyncValue/actions/workflows/Build.yml/badge.svg)](https://github.com/BrentMifsud/AsyncValue/actions/workflows/Build.yml) ![Supported Platforms](https://img.shields.io/static/v1?label=Supported%20Platforms&message=iOS%20|%20macOS%20|%20tvOS%20|%20watchOS%20|%20linux&color=red&style=flat&logo=swift&labelColor=white) ![Swift Versions](https://img.shields.io/static/v1?label=Swift&message=5.5&color=red&style=flat&logo=swift&labelColor=white)
+[![](https://img.shields.io/endpoint?url=https%3A%2F%2Fswiftpackageindex.com%2Fapi%2Fpackages%2FBrentMifsud%2FAsyncValue%2Fbadge%3Ftype%3Dplatforms)](https://swiftpackageindex.com/BrentMifsud/AsyncValue)
+
+[![](https://img.shields.io/endpoint?url=https%3A%2F%2Fswiftpackageindex.com%2Fapi%2Fpackages%2FBrentMifsud%2FAsyncValue%2Fbadge%3Ftype%3Dswift-versions)](https://swiftpackageindex.com/BrentMifsud/AsyncValue)
+
+[![Build](https://github.com/BrentMifsud/AsyncValue/actions/workflows/Build.yml/badge.svg)](https://github.com/BrentMifsud/AsyncValue/actions/workflows/Build.yml)
 
 # AsyncValue
 
