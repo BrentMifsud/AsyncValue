@@ -105,7 +105,7 @@ public struct AsyncValue<Value: Equatable> {
     private var storage: ContinuationStorage<Value>
     private var behavior: YieldBehavior
     
-    /// The initial value for
+    /// Create a new `AsyncValue` with the specified initial value and behavior.
     /// - Parameter wrappedValue: the initial value.
     /// - Parameter behavior: how the `AsyncValue` publishes its updates. Defaults to `YieldBehavior.allValues`
     public init(wrappedValue: Value, behavior: YieldBehavior = .allValues) {
