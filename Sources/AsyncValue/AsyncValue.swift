@@ -147,7 +147,7 @@ public struct AsyncValue<Value: Equatable> {
         set {
             // Trigger the `ObjectWillChangePublisher`
             instance.objectWillChange.send()
-            instance[keyPath: storageKeyPath].storage.yield(newValue)
+            instance[keyPath: storageKeyPath].wrappedValue = newValue
         }
     }
 
