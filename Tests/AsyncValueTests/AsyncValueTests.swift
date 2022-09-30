@@ -67,11 +67,7 @@ import SwiftUI
 
 extension AsyncValueTests {
     fileprivate class TestObservableObject: ObservableObject {
-        var cancellable: AnyCancellable?
-        
-        @AsyncValue var myValue = "Test" {
-            willSet { objectWillChange.send() }
-        }
+        @AsyncValue var myValue = "Test"
     }
 
     func test_observableObjectPublisher() {
@@ -81,7 +77,7 @@ extension AsyncValueTests {
         
         var updateCount: Int = 0
         
-        sut.cancellable = sut.objectWillChange.sink {
+        let cancellable = sut.objectWillChange.sink {
             updateCount += 1
         }
         
@@ -96,6 +92,7 @@ extension AsyncValueTests {
         // Since we subscribed after the observable object is created, the initial state of "Test".
         // Cannot trigger a new value in our sink block above.
         XCTAssertEqual(updateCount, 2)
+        cancellable.cancel()
     }
 }
 #endif

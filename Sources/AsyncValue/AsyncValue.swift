@@ -6,6 +6,9 @@
 //
 
 import Foundation
+#if canImport(Combine)
+import Combine
+#endif
 
 /// A swift concurrency equivalent to `@Published`
 ///
@@ -63,11 +66,11 @@ import Foundation
 ///   // Task value: new value
 ///   ```
 ///
-///   Usage with SwiftUI's `ObseravbleObject`:
+///   Usage with Combine's `ObseravbleObject`:
 ///
 ///   ```swift
-///     @AsyncValue var myValue = "Test" {
-///         willSet { objectWillChange.send() }
+///     class MyObservableOjbect: ObservableObject {
+///         @AsyncValue var myValue = "Test"
 ///     }
 ///   ```
 @propertyWrapper
@@ -113,4 +116,40 @@ public struct AsyncValue<Value: Equatable> {
         self.behavior = behavior
         storage = ContinuationStorage()
     }
+    
+    // Implementing the subscript in an extension does not seem to be picked up by the compiler
+    // so implement it here instead.
+    #if canImport(Combine)
+    /// Creates a new `AsyncValue` within the specified instance
+    /// - Parameter instance: The class in which the property is created
+    /// - Parameter wrappedKeyPath: `KeyPath` to the wrapped value property
+    /// - Parameter storageKeyPath: `KeyPath` to the enclosing instance
+    ///
+    /// The default implementation of the `ObservableObject` protocol falls back to
+    /// the `ObservableObjectPublisher`.
+    /// Here, we use the static subscript implementation described in the
+    /// [Swift Evolution Proposal](https://github.com/apple/swift-evolution/blob/main/proposals/0258-property-wrappers.md#referencing-the-enclosing-self-in-a-wrapper-type)
+    /// as mentioned by [John Sundell](https://www.swiftbysundell.com/articles/accessing-a-swift-property-wrappers-enclosing-instance/)
+    /// to indicate changes made to an `@AsyncValue`.
+    ///
+    /// The compiler will use the static subscript whenever the enclosing type of the property wrapper
+    /// is a class. Here, we further limit the subscript to `ObservableObject`s that use the default
+    /// `ObjectWillChangePublisher`
+    public static subscript<T: ObservableObject>(
+        _enclosingInstance instance: T,
+        wrapped wrappedKeyPath: ReferenceWritableKeyPath<T, Value>,
+        storage storageKeyPath: ReferenceWritableKeyPath<T, Self>
+    ) -> Value where T.ObjectWillChangePublisher == ObservableObjectPublisher {
+        get {
+            // Return the saved wrapped value
+            instance[keyPath: storageKeyPath].wrappedValue
+        }
+        set {
+            // Trigger the `ObjectWillChangePublisher`
+            instance.objectWillChange.send()
+            instance[keyPath: storageKeyPath].storage.yield(newValue)
+        }
+    }
+
+    #endif
 }
