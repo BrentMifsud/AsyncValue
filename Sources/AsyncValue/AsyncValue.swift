@@ -133,20 +133,28 @@ public struct AsyncValue<Value: Equatable> {
     /// to indicate changes made to an `@AsyncValue`.
     ///
     /// The compiler will use the static subscript whenever the enclosing type of the property wrapper
-    /// is a class. Here, we further limit the subscript to `ObservableObject`s that use the default
-    /// `ObjectWillChangePublisher`
-    public static subscript<T: ObservableObject>(
+    /// is a class.
+    ///
+    /// Due to a limitation in the compiler ([apple/swift#54777](https://github.com/apple/swift/issues/54777))
+    /// only *one* subscript may be specified.
+    /// Therefore, the set method dynamically check if the type of the instance is an `ObservableObject`
+    /// that implements the default `ObservableObjectPublisher`
+    public static subscript<T: AnyObject>(
         _enclosingInstance instance: T,
         wrapped wrappedKeyPath: ReferenceWritableKeyPath<T, Value>,
         storage storageKeyPath: ReferenceWritableKeyPath<T, Self>
-    ) -> Value where T.ObjectWillChangePublisher == ObservableObjectPublisher {
+    ) -> Value {
         get {
             // Return the saved wrapped value
             instance[keyPath: storageKeyPath].wrappedValue
         }
         set {
-            // Trigger the `ObjectWillChangePublisher`
-            instance.objectWillChange.send()
+            // Dynamically call objectWillChange if available
+            if let instance = instance as? any ObservableObject,
+               let publisher = (instance.objectWillChange as any Publisher) as? ObservableObjectPublisher {
+                // Trigger the `ObjectWillChangePublisher`
+                publisher.send()
+            }
             instance[keyPath: storageKeyPath].wrappedValue = newValue
         }
     }
