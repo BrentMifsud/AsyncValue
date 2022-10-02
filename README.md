@@ -130,7 +130,7 @@ class MyObservableObject: ObservableObject {
 }
 ```
 
-There is also an `.onRecieve(stream:perform:)` view modifier that allows you to respond to changes from an @AsyncValue
+There is also an `.onRecieve(sequence:perform:)` view modifier that allows you to respond to changes from any AsyncSequence.
 
 ```swift
 struct MyView: View {
