@@ -119,16 +119,21 @@ Task 1 Value: New Value
 
 ## Using with SwiftUI
 
+### ObservableObject support
+
 `AsyncValue` can be adapted to work seamlessly with `ObservableObject` with a single line of code:
 
 ```swift
 class MyObservableObject: ObservableObject {
-    @AsyncValue var myValue: String = "Test" {
-        // IMPORTANT: you must use `willSet` as that is what `@Published` uses under the hood
-        willSet { objectWillChange.send() }
-    }
+    @AsyncValue var myValue: String = "Test"
 }
 ```
+
+Any changes to an `AsyncValue` will trigger a view update in the same way `@Published` does.
+
+Thanks to [jlsiewert](https://github.com/jlsiewert) for coming up with the cool trick for making this work automatically.
+
+### .onReceive equivalent for `AsyncSequence`
 
 There is also an `.onRecieve(sequence:perform:)` view modifier that allows you to respond to changes from any AsyncSequence.
 
@@ -143,8 +148,6 @@ struct MyView: View {
 }
 
 class MyService: ObservableObject {
-    @AsyncValue var myValue: String = "Test" {
-        willSet { objectWillChange.send() }
-    }
+    @AsyncValue var myValue: String = "Test"
 }
 ```
